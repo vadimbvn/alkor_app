@@ -12,8 +12,5 @@ module.exports = defineConfig({
   },
   productionSourceMap: false,
   transpileDependencies: true,
-  publicPath: '',
-  devServer: {
-    port: 5080
-  }
+  publicPath: ''
 });

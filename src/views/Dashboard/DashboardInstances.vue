@@ -2,19 +2,17 @@
   <dashboard-card :title="('Instances')">
     <b-row
       class="mt-3"
-      v-for="data in instances"
-      :key="data.id"
     >
       <b-col sm="6">
         <dl>
           <dt>{{ instancesId }}</dt>
-          <dd>{{ data.id }}</dd>
+          <dd>{{ id }}</dd>
         </dl>
       </b-col>
       <b-col sm="6">
         <dl>
           <dt>{{ instancesUri }}</dt>
-          <dd>{{ data.uri }}</dd>
+          <dd>{{ uri }}</dd>
         </dl>
       </b-col>
     </b-row>
@@ -22,7 +20,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 import DashboardCard from './DashboardCard.vue';
 
 export default {
@@ -34,19 +32,21 @@ export default {
     return {
       instancesId: 'id',
       instancesUri: 'uri',
+      id: 'antix-21-template',
+      uri: '/2/instances/antix-21-template',
       instances: [],
       errors: []
     };
-  },
-  created() {
-    axios.get('http://user:xxxyz@clustergnt43.zvz.lan:5080/2/instances')
-      .then(responce => {
-        this.instances = responce.data;
-      })
-      .catch(e => {
-        this.errors.push(e);
-      });
   }
+  // created() {
+  //   axios.get('http://user:xxxyz@clustergnt43.zvz.lan:5080/2/instances')
+  //     .then(responce => {
+  //       this.instances = responce.data;
+  //     })
+  //     .catch(e => {
+  //       this.errors.push(e);
+  //     });
+  // }
 };
 </script>
 
