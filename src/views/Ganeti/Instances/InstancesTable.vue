@@ -4,16 +4,35 @@
       responsive="md"
       bordered
       head-variant="light"
+      :busy.sync="isBusy"
       :items="items"
       :fields="fields"
     >
       <template #cell(show_details)="row">
         <b-button
-          size="sm"
           variant="primary"
+          size="sm"
+          class="mr-2"
           @click="row.toggleDetails"
         >
-          {{ row.detailsShowing ? 'Закрыть' : 'Подробнее' }}
+          {{ row.detailsShowing ? 'Close' : 'More' }}
+        </b-button>
+        <b-button
+          v-b-modal.modal-modify-instances
+          squared
+          size="sm"
+          class="mr-2"
+          variant="primary"
+        >
+          Modify {{ row.item.name }}
+        </b-button>
+        <b-button
+          variant="danger"
+          size="sm"
+          class="mr-2"
+          @click="deleteInstances(row.item.name)"
+        >
+          delete
         </b-button>
       </template>
 
@@ -36,6 +55,8 @@
                 <dd>{{ row.item.pnode }}</dd>
                 <dt>Disk template:</dt>
                 <dd>{{ row.item.disk_template }}</dd>
+                <dt>Vcpus:</dt>
+                <dd>{{ row.item.beparams.vcpus }}</dd>
                 <dt>Nic.ips:</dt>
                 <dd>{{ row.item.nic_ips }}</dd>
                 <dt>Nic.macs:</dt>
@@ -73,6 +94,7 @@
 
 <script>
 import PageSection from '@/components/Global/PageSection.vue';
+import axios from 'axios';
 
 export default {
   components: {
@@ -80,6 +102,8 @@ export default {
   },
   data() {
     return {
+      instances: null,
+      isBusy: false,
       fields: [
         {
           key: 'expandRow',
@@ -96,6 +120,10 @@ export default {
           label: 'Admin state'
         },
         {
+          key: 'status',
+          label: 'Status'
+        },
+        {
           key: 'os',
           label: 'OS'
         },
@@ -109,32 +137,67 @@ export default {
         },
         {
           key: 'show_details',
-          label: ''
+          label: 'Actions',
+          tdClass: 'text-center'
         }
       ],
       items: [
-        {
-          name: 'antix-21-template',
-          admin_state: 'down',
-          os: 'noop',
-          pnode: 'cl43gnt1',
-          disk_template: 'gluster',
-          nic_ips: 'null',
-          nic_macs: 'aa:00:00:bb:0b:af',
-          nic_modes: 'bridged',
-          nic_uuids: '2c5a17c5-f5ab-4c33-a22b-2f2dd82cce0c',
-          nic_names: 'null',
-          nic_links: 'vmbr0',
-          nic_networks: 'null',
-          nic_bridges: 'vmbr0',
-          network_port: '11000'
-
-        }
-
+        // {
+        //   name: 'antix-21-template',
+        //   admin_state: 'down',
+        //   os: 'noop',
+        //   pnode: 'cl43gnt1',
+        //   disk_template: 'gluster',
+        //   nic_ips: 'null',
+        //   nic_macs: 'aa:00:00:bb:0b:af',
+        //   nic_modes: 'bridged',
+        //   nic_uuids: '2c5a17c5-f5ab-4c33-a22b-2f2dd82cce0c',
+        //   nic_names: 'null',
+        //   nic_links: 'vmbr0',
+        //   nic_networks: 'null',
+        //   nic_bridges: 'vmbr0',
+        //   network_port: '11000'
+        // }
       ]
     };
-  }
+  },
+  mounted() {
+    axios.get('http://10.110.3.230:8008/v1/instance').then(responce => {
+      // eslint-disable-next-line
+      console.log(responce.data);
+      this.items = responce.data;
+    });
+  },
+  // created() {
+  //   axios.get('https://api.coindesk.com/v1/bpi/currentprice.json')
+  //     .then(responce => {
+  //       this.instances = responce.data;
+  //       // eslint-disable-next-line
+  //       console.log(responce.data);
+  //     })
+  //     .catch(e => {
+  //       this.errors.push(e);
+  //     });
+  // },
+  methods: {
+    deleteInstances(name) {
+      const instanceName = {
+        instance_name: name
+      };
 
+      // eslint-disable-next-line
+      console.log(instanceName);
+      axios.delete(`http://10.110.3.230:8008/v1/instance/${name}`, { data: instanceName })
+        .then(responce => {
+          // eslint-disable-next-line
+          console.log(responce);
+        })
+        .catch(e => {
+          // eslint-disable-next-line
+          console.log(e);
+        });
+    }
+  }
 };
 </script>
 

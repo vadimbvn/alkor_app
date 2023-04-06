@@ -30,7 +30,7 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 import PageSection from '@/components/Global/PageSection.vue';
 
 export default {
@@ -48,16 +48,16 @@ export default {
       auto_balance: 'true',
       always_failover: 'false'
     };
+  },
+  created() {
+    axios.get('http://10.110.3.230:8008/v1/info')
+      .then(responce => {
+        this.backend = responce.data.beparams.default;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
   }
-  // created() {
-  //   axios.get('https://10.30.5.219:5080/2/info')
-  //     .then(responce => {
-  //       this.backend = responce.data.beparams.default;
-  //     })
-  //     .catch(e => {
-  //       this.errors.push(e);
-  //     });
-  // }
 };
 </script>
 

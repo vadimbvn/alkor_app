@@ -103,7 +103,7 @@ module.exports = {
       exports: 'never',
       functions: 'never'
     }],
-    'linebreak-style': ['error', 'unix' || 'windows'],
+    'linebreak-style': ['error', 'windows' || 'unix'],
     'no-console': 'error',
     'no-debugger': 'error',
     'arrow-parens': ['error', 'as-needed'],

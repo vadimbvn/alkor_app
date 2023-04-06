@@ -1,9 +1,12 @@
 <template>
   <b-container fluid="xl">
     <page-title />
-    <page-section />
-    <instances-control-panel />
-    <instances-table />
+    <page-section>
+      <instances-buttons-panel />
+      <instances-add-modal />
+      <instances-modify-modal />
+      <instances-table />
+    </page-section>
   </b-container>
 </template>
 
@@ -11,7 +14,9 @@
 import PageTitle from '@/components/Global/PageTitle.vue';
 import PageSection from '@/components/Global/PageSection.vue';
 import InstancesTable from '@/views/Ganeti/Instances/InstancesTable.vue';
-import InstancesControlPanel from '@/views/Ganeti/Instances/InstancesControlPanel.vue';
+import InstancesButtonsPanel from '@/views/Ganeti/Instances/InstancesButtonsPanel.vue';
+import InstancesAddModal from '@/views/Ganeti/Instances/InstancesAddModal.vue';
+import InstancesModifyModal from '@/views/Ganeti/Instances/InstancesModifyModal.vue';
 
 export default {
   name: 'InstancesApp',
@@ -19,7 +24,9 @@ export default {
     PageTitle,
     PageSection,
     InstancesTable,
-    InstancesControlPanel
+    InstancesButtonsPanel,
+    InstancesAddModal,
+    InstancesModifyModal
 
   }
 };
