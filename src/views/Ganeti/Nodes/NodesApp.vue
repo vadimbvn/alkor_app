@@ -1,9 +1,10 @@
 <template>
   <b-container fluid="xl">
     <page-title />
-    <page-section />
-    <nodes-buttons-panel />
-    <nodes-table />
+    <page-section>
+      <nodes-buttons-panel />
+      <nodes-table :api-url="apiUrl" />
+    </page-section>
     <nodes-add-modal />
     <nodes-modify-modal />
     <nodes-evacuate-modal />
@@ -29,6 +30,11 @@ export default {
     NodesAddModal,
     NodesModifyModal,
     NodesEvacuateModal
+  },
+  data() {
+    return {
+      apiUrl: '/nodes'
+    };
   }
 };
 </script>

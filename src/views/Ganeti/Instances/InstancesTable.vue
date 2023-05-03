@@ -4,8 +4,8 @@
       responsive="md"
       bordered
       head-variant="light"
-      :busy.sync="isBusy"
-      :items="items"
+      :busy.sync="isLoading"
+      :items="instances"
       :fields="fields"
       show-empty
       empty-text="No items available"
@@ -144,19 +144,26 @@
 </template>
 
 <script>
-import PageSection from '@/components/Global/PageSection.vue';
 import axios from '@/api/axios';
+import { actionTypes } from '@/store/modules/instances';
+import { mapState } from 'vuex';
+import PageSection from '@/components/Global/PageSection.vue';
 import IconChevron from '@carbon/icons-vue/es/chevron--down/20';
 
 export default {
+  name: 'InstancesTable',
   components: {
     PageSection,
     IconChevron
   },
+  props: {
+    apiUrl: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
-      instances: null,
-      isBusy: false,
       fields: [
         {
           key: 'expandRow',
@@ -222,27 +229,19 @@ export default {
       ]
     };
   },
-  created() {
-    this.getInstances();
+  computed: {
+    ...mapState({
+      isLoading: state => state.instances.isLoading,
+      instances: state => state.instances.data,
+      error: state => state.instances.error
+    })
+  },
+  mounted() {
+    this.$store.dispatch(actionTypes.getInstances, { apiUrl: this.apiUrl });
   },
   methods: {
-    getInstances() {
-      this.isBusy = true;
-
-      axios.get('instance').then(responce => {
-        // eslint-disable-next-line
-        console.log(responce.data);
-        this.items = responce.data;
-        this.isBusy = false;
-      })
-        .catch(e => {
-          this.isBusy = false;
-          // eslint-disable-next-line
-    console.log(e);
-        });
-    },
     deleteInstances(name) {
-      this.isBusy = true;
+      // this.isBusy = true;
 
       const instanceName = {
         instance_name: name
@@ -261,19 +260,23 @@ export default {
       })
         .then(value => {
           // eslint-disable-next-line
-          console.log(instanceName);
+           console.log(instanceName);
           // eslint-disable-next-line
           console.log(value);
           if (value === true) {
-            axios.delete(`instance/${name}`, { data: instanceName })
-              .then(responce => {
-              // eslint-disable-next-line
-              console.log(responce);
-                setTimeout(() => {
-                  this.getInstances();
-                  this.isBusy = false;
-                }, 1000);
-              })
+            // axios.delete(`instance/${name}`, { data: instanceName })
+            //   .then(responce => {
+            //   // eslint-disable-next-line
+            //   console.log(responce);
+            //     setTimeout(() => {
+            //       this.isBusy = false;
+            //     }, 1000);
+            //   })
+            this.$store.dispatch(actionTypes.deleteInstances, {
+              apiUrl: this.apiUrl,
+              name: 'alcor',
+              data: this.instanceName
+            })
               .catch(e => {
               // eslint-disable-next-line
               console.log(e);

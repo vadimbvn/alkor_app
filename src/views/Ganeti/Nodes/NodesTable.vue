@@ -4,10 +4,10 @@
       responsive="md"
       bordered
       head-variant="light"
-      :items="items"
+      :items="nodes"
       :fields="fields"
       show-empty
-      :busy.sync="isBusy"
+      :busy.sync="isLoading"
       empty-text="No items available"
     >
       <template #cell(expandRow)="row">
@@ -102,18 +102,25 @@
 </template>
 
 <script>
+import { actionTypes } from '@/store/modules/nodes';
+import { mapState } from 'vuex';
 import PageSection from '@/components/Global/PageSection.vue';
-import axios from '@/api/axios';
 import IconChevron from '@carbon/icons-vue/es/chevron--down/20';
 
 export default {
+  name: 'NodesTable',
   components: {
     PageSection,
     IconChevron
   },
+  props: {
+    apiUrl: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
-      isBusy: false,
       fields: [
         {
           key: 'expandRow',
@@ -230,25 +237,17 @@ export default {
       ]
     };
   },
-  created() {
-    this.getNodes();
+  computed: {
+    ...mapState({
+      isLoading: state => state.nodes.isLoading,
+      nodes: state => state.nodes.data,
+      error: state => state.nodes.error
+    })
+  },
+  mounted() {
+    this.$store.dispatch(actionTypes.getNodes, { apiUrl: this.apiUrl });
   },
   methods: {
-    getNodes() {
-      this.isBusy = true;
-
-      axios.get('nodes').then(responce => {
-        // eslint-disable-next-line
-        console.log(responce.data);
-        this.items = responce.data;
-        this.isBusy = false;
-      })
-        .catch(e => {
-          this.isBusy = false;
-          // eslint-disable-next-line
-          console.log(e);
-        });
-    },
     toggleRowDetails(row) {
       row.toggleDetails();
     }

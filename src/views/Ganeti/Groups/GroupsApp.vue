@@ -3,8 +3,8 @@
     <page-title />
     <page-section>
       <groups-buttons-panel />
+      <groups-table :api-url="apiUrl" />
       <groups-add-modal />
-      <groups-table />
     </page-section>
   </b-container>
 </template>
@@ -24,6 +24,11 @@ export default {
     GroupsTable,
     GroupsButtonsPanel,
     GroupsAddModal
+  },
+  data() {
+    return {
+      apiUrl: '/groups'
+    };
   }
 };
 </script>

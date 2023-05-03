@@ -3,14 +3,14 @@
     <page-title />
     <page-section>
       <instances-buttons-panel />
-      <instances-add-modal />
-      <instances-modify-modal />
-      <instances-rename-modal />
-      <instances-shutdown-modal />
-      <instances-grow-modal />
-      <instances-reboot-modal />
-      <instances-table />
+      <instances-table :api-url="apiUrl" />
     </page-section>
+    <instances-add-modal />
+    <instances-modify-modal />
+    <instances-rename-modal />
+    <instances-shutdown-modal />
+    <instances-grow-modal />
+    <instances-reboot-modal />
   </b-container>
 </template>
 
@@ -40,6 +40,11 @@ export default {
     InstancesGrowModal,
     InstancesRebootModal
 
+  },
+  data() {
+    return {
+      apiUrl: '/instance'
+    };
   }
 };
 </script>

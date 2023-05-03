@@ -4,18 +4,24 @@
       responsive="md"
       bordered
       head-variant="light"
-      :items="items"
+      :items="groups"
       :fields="fields"
+      show-empty
+      :busy.sync="isLoading"
+      empty-text="No items available"
     >
-      <template #cell(show_details)="row">
+      <template #cell(expandRow)="row">
         <b-button
           size="sm"
-          variant="primary"
-          @click="row.toggleDetails"
-          class="mr-2"
+          variant="light"
+          class="btn-icon-only"
+          @click="toggleRowDetails(row)"
         >
-          {{ row.detailsShowing ? 'Закрыть' : 'Подробнее' }}
+          <icon-chevron />
         </b-button>
+      </template>
+
+      <template #cell(actions)>
         <b-button
           variant="danger"
           size="sm"
@@ -26,7 +32,7 @@
         </b-button>
       </template>
 
-      <template #row-details="row">
+      <template #row-details="{ item }">
         <b-container fluid>
           <b-row>
             <b-col
@@ -36,15 +42,13 @@
             >
               <dl>
                 <dt>Name:</dt>
-                <dd>{{ row.item.name }}</dd>
+                <dd>{{ item.name }}</dd>
                 <dt>Alloc policy:</dt>
-                <dd>{{ row.item.alloc_policy }}</dd>
+                <dd>{{ item.alloc_policy }}</dd>
                 <dt>Node cnt:</dt>
-                <dd>{{ row.item.node_cnt }}</dd>
+                <dd>{{ item.node_cnt }}</dd>
                 <dt>Node list:</dt>
-                <dd>{{ row.item.node_list }}</dd>
-                <dt>Exclusive storage</dt>
-                <dd>{{ row.item.exclusive_storage }}</dd>
+                <dd>{{ item.node_list }}</dd>
               </dl>
             </b-col>
             <b-col
@@ -54,15 +58,13 @@
             >
               <dl>
                 <dt>Ovs:</dt>
-                <dd>{{ row.item.ovs }}</dd>
-                <dt>Ovs name:</dt>
-                <dd>{{ row.item.ovs_name }}</dd>
+                <dd>{{ item.ndparams.ovs }}</dd>
                 <dt>Cpu Speed:</dt>
-                <dd>{{ row.item.cpu_speed }}</dd>
+                <dd>{{ item.ndparams.cpu_speed }}</dd>
                 <dt>Ctime:</dt>
-                <dd>{{ row.item.ctime }}</dd>
+                <dd>{{ item.ctime }}</dd>
                 <dt>Mtime:</dt>
-                <dd>{{ row.item.mtime }}</dd>
+                <dd>{{ item.mtime }}</dd>
               </dl>
             </b-col>
           </b-row>
@@ -73,12 +75,23 @@
 </template>
 
 <script>
-import PageSection from '@/components/Global/PageSection.vue';
+import { actionTypes } from '@/store/modules/groups';
+import { mapState } from 'vuex';
 import axios from 'axios';
+import PageSection from '@/components/Global/PageSection.vue';
+import IconChevron from '@carbon/icons-vue/es/chevron--down/20';
 
 export default {
+  name: 'GroupsTable',
   components: {
-    PageSection
+    PageSection,
+    IconChevron
+  },
+  props: {
+    apiUrl: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -106,7 +119,7 @@ export default {
           label: 'Alloc policy'
         },
         {
-          key: 'cpu_speed',
+          key: 'ndparams.cpu_speed',
           label: 'CPU speed'
         },
         {
@@ -114,8 +127,9 @@ export default {
           label: 'Ctime'
         },
         {
-          key: 'show_details',
-          label: ''
+          key: 'actions',
+          label: 'Actions',
+          tdClass: 'text-center'
         }
       ],
       items: [
@@ -135,17 +149,27 @@ export default {
       ]
     };
   },
-  created() {
-    this.getGroups();
+  computed: {
+    ...mapState({
+      isLoading: state => state.groups.isLoading,
+      groups: state => state.groups.data,
+      error: state => state.groups.error
+    })
   },
+  mounted() {
+    this.$store.dispatch(actionTypes.getGroups, { apiUrl: this.apiUrl });
+  },
+  // created() {
+  //   this.getGroups();
+  // },
   methods: {
-    getGroups() {
-      axios.get('http://10.110.3.230:8008/v1/groups').then(responce => {
-        // eslint-disable-next-line
-        console.log(responce);
-        this.items = responce.data;
-      });
-    },
+    // getGroups() {
+    //   axios.get('http://10.110.3.230:8008/v1/groups').then(responce => {
+    //     // eslint-disable-next-line
+    //     console.log(responce);
+    //     this.items = responce.data;
+    //   });
+    // },
     deleteGroups(name) {
       this.isBusy = true;
 
@@ -190,6 +214,9 @@ export default {
           // eslint-disable-next-line
           console.log(err);
         });
+    },
+    toggleRowDetails(row) {
+      row.toggleDetails();
     }
   }
 
