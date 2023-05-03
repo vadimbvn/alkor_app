@@ -22,116 +22,99 @@
               label="Name:"
               label-for="name-input"
               invalid-feedback="Name is required"
-              :state="state"
+              :state="Namestate"
             >
               <b-form-input
                 id="name-input"
                 v-model="form.instance_name"
                 placeholder="Enter name"
-                :state="state"
+                :state="Namestate"
+                required
               />
             </b-form-group>
             <b-form-group
               label="Node:"
               label-for="node-input"
               invalid-feedback="Node is required"
+              :state="Nodestate"
             >
               <b-form-select
                 v-model="form.pnode"
                 :options="nodes"
+                :state="Nodestate"
+                required
               />
             </b-form-group>
             <b-form-group
               label="Disk size:"
               label-for="disk-input"
               invalid-feedback="Disk is required"
+              :state="Diskstate"
             >
               <b-form-input
                 id="disk-input"
                 v-model="form.disks.size"
                 placeholder="Enter disk size"
+                :state="Diskstate"
+                required
               />
             </b-form-group>
             <b-form-group
               label="Maxmem:"
               label-for="maxmem-input"
               invalid-feedback="Maxmem is required"
+              :state="Maxstate"
             >
               <b-form-input
                 id="maxmem-input"
                 v-model="form.maxmem"
                 placeholder="Enter maxmem"
                 type="number"
+                :state="Maxstate"
+                required
               />
             </b-form-group>
             <b-form-group
               label="Minmem:"
               label-for="minmem-input"
               invalid-feedback="Minmem is required"
+              :state="Minstate"
             >
               <b-form-input
                 id="minmem-input"
                 v-model="form.minmem"
                 placeholder="Enter minmem"
                 type="number"
+                :state="Minstate"
+                required
               />
             </b-form-group>
             <b-form-group
               label="Vcpus:"
               label-for="vcpus-input"
               invalid-feedback="Vcpus is required"
+              :state="Vcpusstate"
             >
               <b-form-input
                 id="vcpus-input"
                 v-model="form.vcpus"
                 placeholder="Enter vcpus"
                 type="number"
+                :state="Vcpusstate"
+                required
               />
             </b-form-group>
             <b-form-group
               label="Ignore ipolicy:"
               label-for="ignore_ipolicy"
-              invalid-feedback="Ignore ipolicy is required"
             >
               <b-form-select
                 v-model="form.ignore_ipolicy"
                 :options="ignoreipolicyces"
               />
             </b-form-group>
-            <b-form-group
-              label="No install"
-              label-for="no_install"
-              invaled-feedbacl="No install is requred"
-            >
-              <b-form-select
-                v-model="form.no_install"
-                :options="noinstalls"
-              />
-            </b-form-group>
           </b-col>
           <b-col sm="6">
-            <b-form-group
-              label="Auto balance:"
-              label-for="autobalance-input"
-              invalid-feedback="Auto balance is required"
-            >
-              <b-form-input
-                id="autobalance-input"
-                v-model="form.autobalance"
-                placeholder="Enter auto balance"
-              />
-            </b-form-group>
-            <b-form-group
-              label="Always failover:"
-              label-for="alwaysfailover-input"
-              invalid-feedback="Always failove is required"
-            >
-              <b-form-input
-                id="alwaysfailover-input"
-                v-model="form.alwaysfailover"
-                placeholder="Enter alwaysfailover input"
-              />
-            </b-form-group>
             <b-form-group
               label="Boot order:"
               label-for="bootorder-input"
@@ -179,7 +162,6 @@
             <b-form-group
               label="Ip check:"
               label-for="ip_check"
-              invalid-feedback="Ip check is required"
             >
               <b-form-select
                 v-model="form.ip_check"
@@ -189,11 +171,19 @@
             <b-form-group
               label="Name check"
               label-for="name_check"
-              invalid-feedback="Name check is required"
             >
               <b-form-select
                 v-model="form.name_check"
                 :options="namecheckes"
+              />
+            </b-form-group>
+            <b-form-group
+              label="No install"
+              label-for="no_install"
+            >
+              <b-form-select
+                v-model="form.no_install"
+                :options="noinstalls"
               />
             </b-form-group>
           </b-col>
@@ -216,8 +206,6 @@ export default {
         maxmem: '',
         minmem: '',
         vcpus: '',
-        autobalance: '',
-        alwaysfailover: '',
         bootorder: '',
         cdromimagepath: '',
         cdromdisktype: '',
@@ -243,18 +231,33 @@ export default {
       ipchecks: [true, false],
       namecheckes: [true, false],
       noinstalls: [true, false],
-      state: null
+      Namestate: null,
+      Nodestate: null,
+      Diskstate: null,
+      Maxstate: null,
+      Minstate: null,
+      Vcpusstate: null
     };
   },
   methods: {
     checkFormValidity() {
       const valid = this.$refs.form.checkValidity();
-      this.state = valid;
+      this.Namestate = valid;
+      this.Nodestate = valid;
+      this.Diskstate = valid;
+      this.Maxstate = valid;
+      this.Minstate = valid;
+      this.Vcpusstate = valid;
       return valid;
     },
     resetModal() {
       this.form.instance_name = '';
-      this.state = null;
+      this.Namestate = null;
+      this.Nodestate = null;
+      this.Diskstate = null;
+      this.Maxstate = null;
+      this.Minstate = null;
+      this.Vcpusstate = null;
     },
     handleOk(bvModalEvent) {
       // Prevent modal from closing
@@ -278,6 +281,9 @@ export default {
           // eslint-disable-next-line
           console.log(response.data);
             this.$bvModal.hide('modal-add-instances');
+            setTimeout(() => {
+              this.$router.go(0);
+            }, 1000);
           })
           .catch(error => {
           // eslint-disable-next-line

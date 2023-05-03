@@ -5,14 +5,24 @@
     >
       <b-col sm="6">
         <dl>
-          <dt>{{ instancesId }}</dt>
-          <dd>{{ id }}</dd>
+          <dt>{{ instancesName }}</dt>
+          <dd
+            v-for="instname in instances"
+            :key="instname.index"
+          >
+            {{ instname.name }}
+          </dd>
         </dl>
       </b-col>
       <b-col sm="6">
         <dl>
-          <dt>{{ instancesUri }}</dt>
-          <dd>{{ uri }}</dd>
+          <dt>{{ instancesStatus }}</dt>
+          <dd
+            v-for="inststatus in instances"
+            :key="inststatus.index"
+          >
+            {{ inststatus.status }}
+          </dd>
         </dl>
       </b-col>
     </b-row>
@@ -20,7 +30,7 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 import DashboardCard from './DashboardCard.vue';
 
 export default {
@@ -30,23 +40,21 @@ export default {
   },
   data() {
     return {
-      instancesId: 'id',
-      instancesUri: 'uri',
-      id: 'antix-21-template',
-      uri: '/2/instances/antix-21-template',
+      instancesName: 'name',
+      instancesStatus: 'status',
       instances: [],
       errors: []
     };
+  },
+  created() {
+    axios.get('http://10.110.3.230:8008/v1/instance')
+      .then(responce => {
+        this.instances = responce.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
   }
-  // created() {
-  //   axios.get('http://user:xxxyz@clustergnt43.zvz.lan:5080/2/instances')
-  //     .then(responce => {
-  //       this.instances = responce.data;
-  //     })
-  //     .catch(e => {
-  //       this.errors.push(e);
-  //     });
-  // }
 };
 </script>
 

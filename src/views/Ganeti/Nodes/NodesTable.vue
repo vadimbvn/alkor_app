@@ -2,24 +2,52 @@
   <page-section>
     <b-table
       responsive="md"
-      hover
-      striped
       bordered
       head-variant="light"
       :items="items"
       :fields="fields"
+      show-empty
+      :busy.sync="isBusy"
+      empty-text="No items available"
     >
-      <template #cell(show_details)="row">
+      <template #cell(expandRow)="row">
         <b-button
           size="sm"
-          variant="primary"
-          @click="row.toggleDetails"
+          variant="light"
+          class="btn-icon-only"
+          @click="toggleRowDetails(row)"
         >
-          {{ row.detailsShowing ? 'Закрыть' : 'Подробнее' }}
+          <icon-chevron />
         </b-button>
       </template>
 
-      <template #row-details="row">
+      <template #cell(actions)>
+        <b-button
+          variant="danger"
+          size="sm"
+          class="mr-2 mt-2"
+        >
+          migrate
+        </b-button>
+        <b-button
+          v-b-modal.modal-modify-nodes
+          variant="success"
+          size="sm"
+          class="mr-2 mt-2"
+        >
+          modify
+        </b-button>
+        <b-button
+          v-b-modal.modal-evacuate-nodes
+          variant="success"
+          size="sm"
+          class="mr-2 mt-2"
+        >
+          evacuate
+        </b-button>
+      </template>
+
+      <template #row-details="{ item }">
         <b-container fluid>
           <b-row>
             <b-col
@@ -29,19 +57,19 @@
             >
               <dl>
                 <dt>Name:</dt>
-                <dd>{{ row.item.name }}</dd>
+                <dd>{{ item.name }}</dd>
                 <dt>Offline:</dt>
-                <dd>{{ row.item.offline }}</dd>
+                <dd>{{ item.offline }}</dd>
                 <dt>Master candidate:</dt>
-                <dd>{{ row.item.master_candidate }}</dd>
-                <dt>Drained:</dt>
-                <dd>{{ row.item.drained }}</dd>
-                <dt>Dtotal:</dt>
-                <dd>{{ row.item.dtotal }}</dd>
-                <dt>Dfree:</dt>
-                <dd>{{ row.item.dfree }}</dd>
-                <dt>Sptotal:</dt>
-                <dd>{{ row.item.sptotal }}</dd>
+                <dd>{{ item.master_candidate }}</dd>
+                <dt>Cnodes:</dt>
+                <dd>{{ item.cnodes }}</dd>
+                <dt>Cnos:</dt>
+                <dd>{{ item.cnos }}</dd>
+                <dt>Ctotal:</dt>
+                <dd>{{ item.ctotal }}</dd>
+                <dt>Master candidate:</dt>
+                <dd>{{ item.master_candidate }}</dd>
               </dl>
             </b-col>
             <b-col
@@ -50,14 +78,20 @@
               xl="6"
             >
               <dl>
-                <dt>Mnode:</dt>
-                <dd>{{ row.item.mnode }}:</dd>
+                <dt>Master capable:</dt>
+                <dd>{{ item.master_capable }}</dd>
+                <dt>Vm capable:</dt>
+                <dd>{{ item.vm_capable }}</dd>
                 <dt>Mfree:</dt>
-                <dd>{{ row.item.mfree }}</dd>
-                <dt>Pinst cnt:</dt>
-                <dd>{{ row.item.pinst_cnt }}</dd>
-                <dt>Secondary ip</dt>
-                <dd>{{ row.item.secondary_ip }}</dd>
+                <dd>{{ item.mfree }}</dd>
+                <dt>Mnode:</dt>
+                <dd>{{ item.mnode }}</dd>
+                <dt>Mtime:</dt>
+                <dd>{{ item.mtime }}</dd>
+                <dt>Mtotal:</dt>
+                <dd>{{ item.mtotal }}</dd>
+                <dt>Cpu speed:</dt>
+                <dd>{{ item.ndparams.cpu_speed }}</dd>
               </dl>
             </b-col>
           </b-row>
@@ -69,13 +103,17 @@
 
 <script>
 import PageSection from '@/components/Global/PageSection.vue';
+import axios from '@/api/axios';
+import IconChevron from '@carbon/icons-vue/es/chevron--down/20';
 
 export default {
   components: {
-    PageSection
+    PageSection,
+    IconChevron
   },
   data() {
     return {
+      isBusy: false,
       fields: [
         {
           key: 'expandRow',
@@ -96,105 +134,127 @@ export default {
           label: 'Master candidate'
         },
         {
+          key: 'mfree',
+          label: 'Mfree'
+        },
+        {
           key: 'mnode',
           label: 'Mnode'
         },
         {
-          key: 'secondary_ip',
-          label: 'Secondary ip'
-        },
-        {
-          key: 'show_details',
-          label: ''
+          key: 'actions',
+          label: 'Actions',
+          tdClass: 'text-center'
         }
       ],
       items: [
-        {
-          name: 'cl43gnt0',
-          offline: 'false',
-          master_candidate: 'true',
-          mnode: '59',
-          secondary_ip: '10.110.3.230',
-          drained: 'false',
-          dtotal: 'null',
-          dfree: 'null',
-          sptotal: 'null',
-          mfree: '15777',
-          pinst_cnt: '0'
-        },
-        {
-          name: 'cl43gnt1',
-          offline: 'false',
-          master_candidate: 'true',
-          mnode: '45',
-          secondary_ip: '10.110.3.231',
-          drained: 'false',
-          dtotal: 'null',
-          dfree: 'null',
-          sptotal: 'null',
-          mfree: '15818',
-          pinst_cnt: '1'
-        },
-        {
-          name: 'cl43gnt2',
-          offline: 'false',
-          master_candidate: 'true',
-          mnode: '45',
-          secondary_ip: '10.110.3.232',
-          drained: 'false',
-          dtotal: 'null',
-          dfree: 'null',
-          sptotal: 'null',
-          mfree: '15818',
-          pinst_cnt: '0'
-        },
-        {
-          name: 'cl43gnt3',
-          offline: 'false',
-          master_candidate: 'true',
-          mnode: '45',
-          secondary_ip: '10.110.3.233',
-          drained: 'false',
-          dtotal: 'null',
-          dfree: 'null',
-          sptotal: 'null',
-          mfree: '15817',
-          pinst_cnt: '0'
-        },
-        {
-          name: 'cl43gnt4',
-          offline: 'false',
-          master_candidate: 'true',
-          mnode: '45',
-          secondary_ip: '10.110.3.234',
-          drained: 'false',
-          dtotal: 'null',
-          dfree: 'null',
-          sptotal: 'null',
-          mfree: '15818',
-          pinst_cnt: '0'
-        },
-        {
-          name: 'cl43gnt5',
-          offline: 'false',
-          master_candidate: 'true',
-          mnode: '46',
-          secondary_ip: '10.110.235',
-          drained: 'false',
-          dtotal: 'null',
-          dfree: 'null',
-          sptotal: 'null',
-          mfree: '15819',
-          pinst_cnt: '0'
-        }
+        // {
+        //   name: 'cl43gnt0',
+        //   offline: 'false',
+        //   master_candidate: 'true',
+        //   mnode: '59',
+        //   secondary_ip: '10.110.3.230',
+        //   drained: 'false',
+        //   dtotal: 'null',
+        //   dfree: 'null',
+        //   sptotal: 'null',
+        //   mfree: '15777',
+        //   pinst_cnt: '0'
+        // }
+        // {
+        //   name: 'cl43gnt1',
+        //   offline: 'false',
+        //   master_candidate: 'true',
+        //   mnode: '45',
+        //   secondary_ip: '10.110.3.231',
+        //   drained: 'false',
+        //   dtotal: 'null',
+        //   dfree: 'null',
+        //   sptotal: 'null',
+        //   mfree: '15818',
+        //   pinst_cnt: '1'
+        // },
+        // {
+        //   name: 'cl43gnt2',
+        //   offline: 'false',
+        //   master_candidate: 'true',
+        //   mnode: '45',
+        //   secondary_ip: '10.110.3.232',
+        //   drained: 'false',
+        //   dtotal: 'null',
+        //   dfree: 'null',
+        //   sptotal: 'null',
+        //   mfree: '15818',
+        //   pinst_cnt: '0'
+        // },
+        // {
+        //   name: 'cl43gnt3',
+        //   offline: 'false',
+        //   master_candidate: 'true',
+        //   mnode: '45',
+        //   secondary_ip: '10.110.3.233',
+        //   drained: 'false',
+        //   dtotal: 'null',
+        //   dfree: 'null',
+        //   sptotal: 'null',
+        //   mfree: '15817',
+        //   pinst_cnt: '0'
+        // },
+        // {
+        //   name: 'cl43gnt4',
+        //   offline: 'false',
+        //   master_candidate: 'true',
+        //   mnode: '45',
+        //   secondary_ip: '10.110.3.234',
+        //   drained: 'false',
+        //   dtotal: 'null',
+        //   dfree: 'null',
+        //   sptotal: 'null',
+        //   mfree: '15818',
+        //   pinst_cnt: '0'
+        // },
+        // {
+        //   name: 'cl43gnt5',
+        //   offline: 'false',
+        //   master_candidate: 'true',
+        //   mnode: '46',
+        //   secondary_ip: '10.110.235',
+        //   drained: 'false',
+        //   dtotal: 'null',
+        //   dfree: 'null',
+        //   sptotal: 'null',
+        //   mfree: '15819',
+        //   pinst_cnt: '0'
+        // }
 
       ]
     };
-  }
+  },
+  created() {
+    this.getNodes();
+  },
+  methods: {
+    getNodes() {
+      this.isBusy = true;
 
+      axios.get('nodes').then(responce => {
+        // eslint-disable-next-line
+        console.log(responce.data);
+        this.items = responce.data;
+        this.isBusy = false;
+      })
+        .catch(e => {
+          this.isBusy = false;
+          // eslint-disable-next-line
+          console.log(e);
+        });
+    },
+    toggleRowDetails(row) {
+      row.toggleDetails();
+    }
+  }
 };
 </script>
 
   <style scoped>
-
   </style>

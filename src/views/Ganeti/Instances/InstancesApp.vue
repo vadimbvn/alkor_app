@@ -5,6 +5,10 @@
       <instances-buttons-panel />
       <instances-add-modal />
       <instances-modify-modal />
+      <instances-rename-modal />
+      <instances-shutdown-modal />
+      <instances-grow-modal />
+      <instances-reboot-modal />
       <instances-table />
     </page-section>
   </b-container>
@@ -17,6 +21,10 @@ import InstancesTable from '@/views/Ganeti/Instances/InstancesTable.vue';
 import InstancesButtonsPanel from '@/views/Ganeti/Instances/InstancesButtonsPanel.vue';
 import InstancesAddModal from '@/views/Ganeti/Instances/InstancesAddModal.vue';
 import InstancesModifyModal from '@/views/Ganeti/Instances/InstancesModifyModal.vue';
+import InstancesRenameModal from '@/views/Ganeti/Instances/InstancesRenameModal.vue';
+import InstancesShutdownModal from '@/views/Ganeti/Instances/InstancesShutdownModal.vue';
+import InstancesGrowModal from '@/views/Ganeti/Instances/InstancesGrowModal.vue';
+import InstancesRebootModal from '@/views/Ganeti/Instances/InstancesRebootModal.vue';
 
 export default {
   name: 'InstancesApp',
@@ -26,7 +34,11 @@ export default {
     InstancesTable,
     InstancesButtonsPanel,
     InstancesAddModal,
-    InstancesModifyModal
+    InstancesModifyModal,
+    InstancesRenameModal,
+    InstancesShutdownModal,
+    InstancesGrowModal,
+    InstancesRebootModal
 
   }
 };

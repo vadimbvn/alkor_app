@@ -16,7 +16,7 @@
             label-class="font-weight-bold"
           >
             <b-form-input
-              v-model="name"
+              v-model="cluster.name"
               type="text"
               id="input-name"
             />
@@ -29,7 +29,7 @@
             label-class="font-weight-bold"
           >
             <b-form-input
-              v-model="master"
+              v-model="cluster.master"
               id="input-master"
               disabled
             />
@@ -42,7 +42,7 @@
             label-class="font-weight-bold"
           >
             <b-form-input
-              v-model="software_version"
+              v-model="cluster.software_version"
               id="input-software-version"
               disabled
             />
@@ -55,7 +55,7 @@
             label-class="font-weight-bold"
           >
             <b-form-input
-              v-model="protocol_version"
+              v-model="cluster.protocol_version"
               id="input-protocol-version"
               disabled
             />
@@ -68,7 +68,7 @@
             label-class="font-weight-bold"
           >
             <b-form-input
-              v-model="config_version"
+              v-model="cluster.config_version"
               id="input-config-version"
               disabled
             />
@@ -81,7 +81,7 @@
             label-class="font-weight-bold"
           >
             <b-form-input
-              v-model="max_running_jobs"
+              v-model="cluster.max_running_jobs"
               type="number"
               id="input-running-jobs"
               min="0"
@@ -95,7 +95,7 @@
             label-class="font-weight-bold"
           >
             <b-form-input
-              v-model="max_tracked_jobs"
+              v-model="cluster.max_tracked_jobs"
               type="number"
               id="input-tracked-jobs"
               min="0"
@@ -109,7 +109,7 @@
             label-class="font-weight-bold"
           >
             <b-form-input
-              v-model="mac_prefix"
+              v-model="cluster.mac_prefix"
               type="text"
               id="input-mac"
             />
@@ -122,7 +122,7 @@
             label-class="font-weight-bold"
           >
             <b-form-input
-              v-model="master_netmask"
+              v-model="cluster.master_netmask"
               type="number"
               id="input-netmask"
               min="0"
@@ -142,7 +142,7 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 import PageSection from '@/components/Global/PageSection.vue';
 
 export default {
@@ -153,27 +153,24 @@ export default {
   data() {
     return {
       cardName: 'Cluster',
-      clusters: [],
-      name: 'clustergnt43',
-      master: 'cl43gnt0',
-      software_version: '3.0.2',
-      protocol_version: '3000000',
-      config_version: '3000000',
-      max_running_jobs: '10',
-      max_tracked_jobs: '25',
-      mac_prefix: 'aa:00:00',
-      master_netmask: '32'
+      cluster: [],
+      errors: []
     };
+  },
+  created() {
+    this.getClusters();
+  },
+  methods: {
+    getClusters() {
+      axios.get('http://10.110.3.230:8008/v1/info')
+        .then(responce => {
+          this.cluster = responce.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    }
   }
-  // created() {
-  //   axios.get('https://10.30.5.219:5080/2/info')
-  //     .then(responce => {
-  //       this.clusters = responce.data;
-  //     })
-  //     .catch(e => {
-  //       this.errors.push(e);
-  //     });
-  // }
 };
 </script>
 

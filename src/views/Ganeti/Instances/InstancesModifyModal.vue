@@ -115,7 +115,7 @@ export default {
         .then(response => {
           // eslint-disable-next-line
           console.log(response.data);
-          this.$bvModal.hide('modal-add-instances');
+          this.$bvModal.hide('modal-modify-instances');
         })
         .catch(error => {
           // eslint-disable-next-line
