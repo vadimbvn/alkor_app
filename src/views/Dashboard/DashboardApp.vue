@@ -1,22 +1,19 @@
 <template>
   <b-container fluid="xl">
     <page-title />
-    <div v-if="isLoading">
-      Loading...
-    </div>
-    <div v-if="error">
-      Something bad error
-    </div>
-    <div v-if="data">
+    <div>
       <page-section class="mb-1">
         <b-card-group deck>
-          <dashboard-groups />
-          <dashboard-nodes />
-          <dashboard-instances />
+          <dashboard-groups :groups-api="groupsApi" />
+          <dashboard-nodes :nodes-api="nodesApi" />
+          <dashboard-instances :instances-api="instancesApi" />
         </b-card-group>
         <b-card-group deck>
           <dashboard-gluster />
-          <dashboard-jobs />
+          <dashboard-jobs
+            class="scroll"
+            :jobs-api="jobsApi"
+          />
           <dashboard-networks />
         </b-card-group>
       </page-section>
@@ -51,7 +48,6 @@ import DashboardNetworks from '@/views/Dashboard/DashboardNetworks.vue';
 import DashboardCpu from '@/views/Dashboard/DashboardCpu.vue';
 import DashboardMemory from '@/views/Dashboard/DashboardMemory.vue';
 import DashboardStorage from '@/views/Dashboard/DashboardStorage.vue';
-import { mapState } from 'vuex';
 
 export default {
   name: 'DashboardApp',
@@ -69,17 +65,19 @@ export default {
     DashboardStorage
   },
   data() {
-    return {};
-  },
-  computed: {
-    ...mapState({
-      isLoading: state => state.dashboard.isLoading,
-      error: state => state.dashboard.error,
-      data: state => state.dashboard.data
-    })
+    return {
+      instancesApi: '/instance',
+      nodesApi: '/nodes',
+      groupsApi: '/groups',
+      jobsApi: '/jobs'
+    };
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.scroll {
+  max-height: 266px;
+  overflow-y: auto;
+}
 </style>

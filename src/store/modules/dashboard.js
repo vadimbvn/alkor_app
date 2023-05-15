@@ -1,5 +1,5 @@
 const state = {
-  data: true,
+  data: null,
   isLoading: false,
   error: null
 };

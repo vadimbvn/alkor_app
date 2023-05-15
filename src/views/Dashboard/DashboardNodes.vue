@@ -1,28 +1,39 @@
 <template>
-  <dashboard-card :title="('Nodes')">
-    <b-row
-      class="mt-3"
+  <dashboard-card title="Nodes">
+    <div v-if="isLoading">
+      Loading...
+    </div>
+    <div v-if="error">
+      Something bad happened
+    </div>
+    <div
+      v-if="nodes"
     >
-      <b-col sm="6">
-        <dl>
-          <dt>{{ nodeId }}</dt>
-          <dd
-            v-for="node in nodes"
-            :key="node.index"
-          >
-            {{ node.name }}
-          </dd>
-        </dl>
-      </b-col>
-      <b-col sm="6">
-        <dl />
-      </b-col>
-    </b-row>
+      <b-row
+        class="mt-3"
+      >
+        <b-col sm="6">
+          <dl>
+            <dt>name</dt>
+            <dd
+              v-for="node in nodes"
+              :key="node.index"
+            >
+              {{ node.name }}
+            </dd>
+          </dl>
+        </b-col>
+        <b-col sm="6">
+          <dl />
+        </b-col>
+      </b-row>
+    </div>
   </dashboard-card>
 </template>
 
 <script>
-import axios from 'axios';
+import { actionTypes } from '@/store/modules/nodes';
+import { mapState } from 'vuex';
 import DashboardCard from './DashboardCard.vue';
 
 export default {
@@ -30,21 +41,21 @@ export default {
   components: {
     DashboardCard
   },
-  data() {
-    return {
-      nodeId: 'name',
-      nodes: [],
-      errors: []
-    };
+  props: {
+    nodesApi: {
+      type: String,
+      required: true
+    }
   },
-  created() {
-    axios.get('http://10.110.3.230:8008/v1/nodes')
-      .then(responce => {
-        this.nodes = responce.data;
-      })
-      .catch(e => {
-        this.errors.push(e);
-      });
+  computed: {
+    ...mapState({
+      isLoading: state => state.nodes.isLoading,
+      nodes: state => state.nodes.data,
+      error: state => state.nodes.error
+    })
+  },
+  mounted() {
+    this.$store.dispatch(actionTypes.getNodes, { apiUrl: this.nodesApi });
   }
 };
 </script>

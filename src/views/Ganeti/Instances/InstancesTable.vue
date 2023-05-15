@@ -237,11 +237,14 @@ export default {
     })
   },
   mounted() {
-    this.$store.dispatch(actionTypes.getInstances, { apiUrl: this.apiUrl });
+    this.fetchInstances();
   },
   methods: {
+    fetchInstances() {
+      this.$store.dispatch(actionTypes.getInstances, { apiUrl: this.apiUrl });
+    },
     deleteInstances(name) {
-      // this.isBusy = true;
+      this.isBusy = true;
 
       const instanceName = {
         instance_name: name
@@ -264,19 +267,19 @@ export default {
           // eslint-disable-next-line
           console.log(value);
           if (value === true) {
-            // axios.delete(`instance/${name}`, { data: instanceName })
-            //   .then(responce => {
-            //   // eslint-disable-next-line
-            //   console.log(responce);
-            //     setTimeout(() => {
-            //       this.isBusy = false;
-            //     }, 1000);
-            //   })
-            this.$store.dispatch(actionTypes.deleteInstances, {
-              apiUrl: this.apiUrl,
-              name: 'alcor',
-              data: this.instanceName
-            })
+            axios.delete(`instance/${name}`, { data: instanceName })
+              .then(responce => {
+              // eslint-disable-next-line
+              console.log(responce);
+                setTimeout(() => {
+                  this.fetchInstances();
+                }, 1000);
+              })
+            // this.$store.dispatch(actionTypes.deleteInstances, {
+            //   apiUrl: this.apiUrl,
+            //   name: 'alcor',
+            //   data: this.name
+            // })
               .catch(e => {
               // eslint-disable-next-line
               console.log(e);

@@ -1,5 +1,5 @@
 <template>
-  <dashboard-card :title="('CPU')" />
+  <dashboard-card title="CPU" />
 </template>
 
 <script>

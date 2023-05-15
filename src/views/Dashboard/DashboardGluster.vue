@@ -1,5 +1,5 @@
 <template>
-  <dashboard-card :title="('Gluster volumes')">
+  <dashboard-card title="Gluster volumes">
     <b-row class="mt-3">
       <b-col sm="6">
         <dl>

@@ -7,6 +7,7 @@
       :items="jobs"
       :fields="fields"
       show-empty
+      fixed="false"
       :busy.sync="isLoading"
       empty-text="No items available"
     />

@@ -3,7 +3,7 @@ import instancesApi from '@/api/instances';
 const state = {
   data: null,
   isLoading: false,
-  error: false
+  error: null
 };
 
 export const mutationTypes = {
@@ -29,6 +29,7 @@ const mutations = {
   [mutationTypes.getInstancesSuccess](state, payload) {
     state.isLoading = false;
     state.data = payload;
+    state.error = false;
   },
   [mutationTypes.getInstancesFailure](state) {
     state.isLoading = false;
